@@ -1,26 +1,31 @@
-# StatGenie: Local NL2SQL Sports Analytics ⚾
+# StatGenie: A Learning Journey into Local NL2SQL ⚾
 
-StatGenie is a local-first **Text-to-SQL (NL2SQL)** data agent designed for sports analytics. Inspired by **Databricks Genie**, this project allows users to query sports databases using plain English. 
+StatGenie is an experimental **Text-to-SQL (NL2SQL)** data agent built to explore the challenges of on-device AI and natural language interfaces for structured data. 
 
-This is a learning-focused project ("Work-in-Progress") exploring the intersection of statistics, LLM orchestration, and on-device AI.
+This project started as a way to apply what I learned about local LLMs in class, using a familiar MLB batting dataset as a testing ground. It is less about being a "perfect tool" and more about the architectural decisions and roadblocks encountered while building it.
 
-## 🚀 The Brain: Liquid AI LFM2-8B
-This project runs on the **LFM2-8B-A1B-Q4_K_M** model using **llama.cpp**. 
-- **Hybrid Architecture:** Uses a mix of convolutions and attention.
-- **Efficient MoE:** Although it has 8.3B parameters, only **1.5B are active** during inference, making it incredibly fast on a MacBook.
-- **Privacy First:** No data ever leaves your device.
+## 💡 Inspiration: The "Genie" 
+This project is inspired by **Databricks Genie**, an AI/BI feature that allows users to chat with their data. Genie works by:
+- **Semantic Mapping:** Using metadata and a "Knowledge Store" to translate business terms into technical columns.
+- **Trust & Verification:** Providing the underlying SQL so users can trust the answer.
+- **Feedback Loops:** Allowing analysts to "teach" the agent through instructions and example queries.
 
-## 🧠 Project Architecture
-StatGenie uses a **Modular Chain** approach for high reliability on local hardware:
-1. **Schema Injection:** Hardcoded table metadata prevents the LLM from hallucinating column names.
-2. **SQL Generation:** Translates English questions into precise SQLite queries.
-3. **Synthesis:** Python executes the query and returns a conversational answer.
+StatGenie is my attempt to build a "miniature," local version of this—one that is agnostic enough to eventually work with any dataset (batting, fielding, or even non-sports data) just by swapping the schema and database.
 
-## 🗺️ Roadmap & Future Goals
-- [ ] **Data Dictionary:** Finalize schema descriptions so the LLM knows `hr` = Home Runs.
-- [ ] **Data Scaling:** Expand beyond batting to include fielding and pitching stats.
-- [ ] **Streamlit UI:** Build a front-end "chat" interface for a seamless experience.
-- [ ] **Database Management:** Add tools to update or refresh the database via the UI.
+## 🚀 Technical Setup
+- **Model:** Liquid AI LFM2-8B (LFM2-8B-A1B-Q4_K_M)
+- **Engine:** llama.cpp (`llama-server`) on Port 8080
+- **Orchestration:** LangChain (Modular Chain approach)
+- **Database:** SQLite
 
-## 📄 License
-This is an open-source project created for educational purposes.
+## 🚧 Roadblocks & Design Goals
+The goal of this project is to intentionally encounter and solve common NL2SQL problems:
+- **The "Schema Gap":** How do I help an 8B model understand that `hr` means Home Runs? (Solution: Hardcoded Data Dictionary).
+- **Subjectivity Handling:** When asked "Who is the best player?", a standard SQL query fails. I am working on a "Clarification Loop" where the LLM questions the user back: *"Do you mean by home runs, batting average, or defensive value?"*
+- **Agnostic Architecture:** Designing the system so the logic remains the same even if the data changes from baseball to something entirely different.
+
+## 🗺️ Learning Roadmap
+- [ ] **Dynamic Data Dictionary:** Finalize the column descriptions for the MLB dataset.
+- [ ] **Clarification Logic:** Implement a system where the LLM flags ambiguous/subjective questions instead of guessing.
+- [ ] **Scaling:** Add fielding/pitching stats and verify cross-table reasoning.
+- [ ] **Streamlit Interface:** Build a frontend for easier interaction and database updates.
