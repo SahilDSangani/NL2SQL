@@ -1,5 +1,6 @@
 import sqlite3
 from operator import itemgetter
+import concurrent.futures
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough
@@ -13,7 +14,8 @@ llm = ChatOpenAI(
     base_url="http://localhost:8080/v1",
     api_key="not-needed",
     model="llama3",
-    temperature=0
+    temperature=0,
+    request_timeout=20 
 )
 
 # SQL Generation Prompt
@@ -62,6 +64,24 @@ full_chain = (
     | StrOutputParser()
 )
 
-# test it
-question = "What is the total number of home runs hit in 2023?"
-print(full_chain.invoke({"question": question}))
+
+def get_response(user_question):
+    """
+    Runs the chain with a hard timeout (e.g., 15 seconds).
+    If it takes too long, it kills the process and returns the fallback message.
+    """
+    TIMEOUT_SECONDS = 15
+    
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        future = executor.submit(full_chain.invoke, {"question": user_question})
+        try:
+            return future.result(timeout=TIMEOUT_SECONDS)
+        except concurrent.futures.TimeoutError:
+            return "I couldn't find an answer (the request timed out)."
+        except Exception as e:
+            return f"I ran into an error: {e}"
+
+# For testing
+if __name__ == "__main__":
+    print(get_response("What is the total number of home runs hit in 2023?"))
+
