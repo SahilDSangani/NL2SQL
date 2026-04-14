@@ -1,0 +1,41 @@
+# Virtual environment
+venv/
+.venv/
+env/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Database — regenerate with ingest_data.py
+*.db
+*.sqlite
+*.sqlite3
+
+# Scraped CSVs — regenerate with scrape_data.py
+pitching.csv
+fielding.csv
+
+# Keep batting.csv (source data, not generated)
+
+# pybaseball cache
+.pybaseball/
+
+# Environment variables
+.env
+.env.local
+
+# macOS
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
+*.code-workspace
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Logs
+*.log
